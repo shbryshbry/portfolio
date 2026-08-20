@@ -18,6 +18,8 @@
   }
   a { text-decoration: none; }
 
+  html { scroll-behavior: smooth; }
+
   /* ===== 整体布局：左侧栏 + 主内容 ===== */
   .layout { display: flex; min-height: 100vh; }
 
@@ -28,6 +30,7 @@
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
     padding: 32px 24px;
+    background: #fff;
   }
   .sidebar .logo { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
   .sidebar .logo span { color: var(--muted); font-weight: 400; font-size: 14px; }
@@ -35,10 +38,15 @@
   .sidebar nav { display: flex; flex-direction: column; gap: 4px; }
   .sidebar nav a {
     color: var(--muted); font-size: 14px; padding: 8px 12px;
-    border-radius: 8px; transition: all 0.15s;
+    border-radius: 8px; transition: all 0.25s;
     display: flex; align-items: center; justify-content: space-between;
+    border-left: 2px solid transparent;
   }
   .sidebar nav a:hover { background: #f3f4f6; color: var(--text); }
+  .sidebar nav a.active {
+    background: #f3f4f6; color: var(--text); font-weight: 600;
+    border-left-color: var(--text);
+  }
   .sidebar nav a .num { font-size: 11px; color: #9ca3af; }
   .sidebar .foot { margin-top: auto; color: #9ca3af; font-size: 12px; line-height: 1.8; }
   .sidebar .foot b { display: block; color: var(--muted); font-size: 13px; }
@@ -47,18 +55,24 @@
   .main { flex: 1; min-width: 0; padding: 48px 48px 64px; }
 
   .hero { margin-bottom: 48px; }
-  .hero h1 { font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; letter-spacing: -1px; }
-  .hero p { color: var(--muted); margin-top: 8px; font-size: 15px; }
-  .hero .stats { margin-top: 20px; display: flex; gap: 28px; }
+  .hero h1 {
+    font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; letter-spacing: -1px;
+    animation: heroIn 0.8s ease both;
+  }
+  .hero p { color: var(--muted); margin-top: 8px; font-size: 15px; animation: heroIn 0.8s 0.1s ease both; }
+  .hero .stats { margin-top: 20px; display: flex; gap: 28px; animation: heroIn 0.8s 0.2s ease both; }
   .hero .stats div { font-size: 13px; color: var(--muted); }
-  .hero .stats b { display: block; font-size: 22px; color: var(--text); }
+  .hero .stats b { display: block; font-size: 22px; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  @keyframes heroIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
   .block { margin-bottom: 64px; scroll-margin-top: 24px; }
   .block h2 {
     font-size: 20px; font-weight: 700; margin-bottom: 6px;
     display: flex; align-items: center; gap: 12px;
   }
-  .block h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .block h2::after { content: ""; flex: 1; height: 1px; background: var(--border); transform: scaleX(0); transform-origin: left; transition: transform 0.6s ease; }
+  .block.in h2::after { transform: scaleX(1); }
   .block .group-desc { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
 
   /* ===== 作品网格（比例保持：视频 16:9，图片 4:3） ===== */
@@ -69,8 +83,11 @@
   .card {
     border: 1px solid var(--border); border-radius: var(--radius);
     overflow: hidden; background: #fff;
-    transition: transform 0.2s, box-shadow 0.2s;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.25s ease;
+    will-change: opacity, transform;
   }
+  .card.in { opacity: 1; transform: none; }
   .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
   .card .player { position: relative; background: #f3f4f6; }
   .card video, .card img { width: 100%; display: block; object-fit: cover; }
@@ -100,10 +117,17 @@
     .sidebar .logo { margin: 0 16px 0 0; }
     .sidebar .sub { display: none; }
     .sidebar nav { flex-direction: row; flex-wrap: wrap; }
-    .sidebar nav a { padding: 6px 10px; font-size: 13px; }
+    .sidebar nav a { padding: 6px 10px; font-size: 13px; border-left: none; }
+    .sidebar nav a.active { border-bottom: 2px solid var(--text); border-left-color: transparent; }
     .sidebar .foot { display: none; }
     .main { padding: 32px 20px 48px; }
     .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== 减弱动态偏好时关闭动画 ===== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .card { opacity: 1; transform: none; }
   }
 </style>
 </head>
@@ -129,9 +153,9 @@
       <h1>我的作品集</h1>
       <p>AE 动效 · AI 创作 · Maya 渲染 · 动画作品</p>
       <div class="stats">
-        <div><b id="totalCount">0</b>全部作品</div>
-        <div><b id="videoCount">0</b>视频</div>
-        <div><b id="imageCount">0</b>图片</div>
+        <div><b class="count" data-to="0">0</b>全部作品</div>
+        <div><b class="count" data-to="0">0</b>视频</div>
+        <div><b class="count" data-to="0">0</b>图片</div>
       </div>
     </section>
 
@@ -179,8 +203,10 @@ function playerHtml(w) {
     '<video controls preload="metadata" playsinline src="' + w.file + '"></video></div>';
 }
 
-function cardHtml(w) {
-  return '<div class="card">' + playerHtml(w) +
+function cardHtml(w, i) {
+  // 错峰浮现：每个卡片按顺序延迟
+  var delay = ' style="transition-delay:' + (i * 70) + 'ms"';
+  return '<div class="card"' + delay + '>' + playerHtml(w) +
     '<div class="meta"><h3>' + w.title + '</h3><span>' + w.tag + '</span></div>' +
     '<div class="desc">' + w.file + '</div></div>';
 }
@@ -194,9 +220,10 @@ works.forEach(function (w) {
 
 var groupsHtml = "";
 groupNames.forEach(function (g) {
+  var items = groups[g].map(cardHtml).join("");
   groupsHtml += '<section class="block" id="' + g + '"><h2>' + g + '</h2>' +
     '<div class="group-desc">' + groups[g].length + ' 件作品</div>' +
-    '<div class="grid">' + groups[g].map(cardHtml).join("") + '</div></section>';
+    '<div class="grid">' + items + '</div></section>';
 });
 document.getElementById("groups").innerHTML = groupsHtml;
 
@@ -205,12 +232,75 @@ document.getElementById("navLinks").innerHTML = groupNames.map(function (g) {
   return '<a href="#' + g + '">' + g + '<span class="num">' + groups[g].length + '</span></a>';
 }).join("");
 
-// 统计
+// 统计数字
 var videoN = works.filter(function (w) { return w.file.toLowerCase().indexOf(".mp4") > -1; }).length;
 var imageN = works.length - videoN;
-document.getElementById("totalCount").textContent = works.length;
-document.getElementById("videoCount").textContent = videoN;
-document.getElementById("imageCount").textContent = imageN;
+var counts = [works.length, videoN, imageN];
+var countEls = document.querySelectorAll(".count");
+countEls.forEach(function (el, i) {
+  el.setAttribute("data-to", counts[i]);
+  el.textContent = "0";
+});
+
+// ===================== 滚动渐入动效 =====================
+function initReveal() {
+  var els = document.querySelectorAll(".block, .card");
+  var navLinks = document.querySelectorAll(".sidebar nav a");
+  var blocks = document.querySelectorAll(".block");
+  var countDone = false;
+
+  function animateCount(el) {
+    var to = parseInt(el.getAttribute("data-to"), 10);
+    var t0 = null, dur = 900;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3); // ease-out
+      el.textContent = Math.round(to * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function highlightNav() {
+    var pos = window.scrollY + 80;
+    var current = "";
+    blocks.forEach(function (b) {
+      if (b.offsetTop <= pos) current = b.id;
+    });
+    navLinks.forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + current);
+    });
+  }
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          // 统计数字滚动一次
+          if (!countDone && e.target.classList.contains("block")) {
+            countDone = true;
+            countEls.forEach(animateCount);
+          }
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    els.forEach(function (el) { io.observe(el); });
+    blocks.forEach(function (b) { io.observe(b); });
+  } else {
+    // 不支持 IntersectionObserver 时直接显示
+    els.forEach(function (el) { el.classList.add("in"); });
+    countEls.forEach(animateCount);
+  }
+
+  // 导航高亮跟随滚动
+  window.addEventListener("scroll", highlightNav, { passive: true });
+  highlightNav();
+}
+initReveal();
 </script>
 </body>
 </html>
