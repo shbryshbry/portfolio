@@ -125,9 +125,50 @@
   }
 
   /* ===== 减弱动态偏好时关闭动画 ===== */
+  /* ===== 鼠标跟随光晕 ===== */
+  .cursor-dot, .cursor-halo {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+    border-radius: 50%; transform: translate(-50%, -50%);
+  }
+  .cursor-dot {
+    width: 8px; height: 8px; background: var(--text);
+    transition: transform 0.08s ease;
+  }
+  .cursor-halo {
+    width: 40px; height: 40px;
+    background: rgba(17,17,17,0.06);
+    border: 1px solid rgba(17,17,17,0.15);
+  }
+  /* 悬停链接/卡片时光晕放大 */
+  .cursor-halo.hovering { width: 64px; height: 64px; background: rgba(17,17,17,0.03); }
+
+  /* ===== 呼吸按钮 ===== */
+  .btn-breathe {
+    display: inline-block; padding: 10px 22px;
+    border: 1px solid var(--text); border-radius: 999px;
+    color: var(--text); font-size: 14px; font-weight: 600;
+    background: #fff; cursor: pointer; text-align: center;
+    animation: breathe 2.4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(17,17,17,0.18); }
+    50%      { box-shadow: 0 0 0 12px rgba(17,17,17,0); }
+  }
+  .btn-breathe:hover { background: var(--text); color: #fff; animation-play-state: paused; box-shadow: none; }
+
+  /* ===== 点击脉冲呼吸 ===== */
+  .pulse {
+    animation: pulseRing 0.7s ease-out;
+  }
+  @keyframes pulseRing {
+    0%   { box-shadow: 0 0 0 0 rgba(17,17,17,0.25); }
+    100% { box-shadow: 0 0 0 24px rgba(17,17,17,0); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .card { opacity: 1; transform: none; }
+    .btn-breathe { animation: none; }
   }
 </style>
 </head>
@@ -142,7 +183,7 @@
     <nav id="navLinks"></nav>
     <div class="foot">
       <b>联系</b>
-      联系方式可在此处填写
+      <a class="btn-breathe" href="mailto:ysbiao2005@163.com">联系我</a>
       <br>© 2026
     </div>
   </aside>
@@ -167,6 +208,9 @@
   </main>
 
 </div>
+
+<div class="cursor-dot"></div>
+<div class="cursor-halo"></div>
 
 <script>
 // ===================== 作品数据 =====================
@@ -301,6 +345,52 @@ function initReveal() {
   highlightNav();
 }
 initReveal();
+
+// ===================== 鼠标跟随光晕 =====================
+(function () {
+  // 仅精细指针设备（鼠标）启用，触屏自动忽略
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  var dot = document.querySelector(".cursor-dot");
+  var halo = document.querySelector(".cursor-halo");
+  var tx = 0, ty = 0, hx = 0, hy = 0, raf = null;
+
+  document.addEventListener("mousemove", function (e) {
+    tx = e.clientX; ty = e.clientY;
+    dot.style.left = tx + "px";
+    dot.style.top = ty + "px";
+    if (!raf) raf = requestAnimationFrame(loop);
+  });
+
+  // 光晕缓动跟随（呼吸感的拖尾）
+  function loop() {
+    hx += (tx - hx) * 0.16;
+    hy += (ty - hy) * 0.16;
+    halo.style.left = hx + "px";
+    halo.style.top = hy + "px";
+    if (Math.abs(tx - hx) > 0.5 || Math.abs(ty - hy) > 0.5) {
+      raf = requestAnimationFrame(loop);
+    } else {
+      raf = null;
+    }
+  }
+
+  // 悬停可点击元素时光晕放大
+  document.addEventListener("mouseover", function (e) {
+    halo.classList.toggle("hovering", !!e.target.closest("a, .card, button"));
+  });
+})();
+
+// ===================== 点击呼吸脉冲 =====================
+(function () {
+  var cards = document.querySelectorAll(".card, .btn-breathe");
+  cards.forEach(function (el) {
+    el.addEventListener("click", function () {
+      el.classList.remove("pulse");
+      void el.offsetWidth; // 强制重绘以重启动画
+      el.classList.add("pulse");
+    });
+  });
+})();
 </script>
 </body>
 </html>
