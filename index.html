@@ -7,7 +7,7 @@
 <style>
   :root {
     --bg: #ffffff; --text: #111111; --muted: #6b7280;
-    --border: #e5e7eb; --radius: 12px; --maxw: 1200px;
+    --border: #e5e7eb; --radius: 12px; --sidebar-w: 260px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -16,35 +16,56 @@
                  "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  a { text-decoration: none; }
 
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
+  /* ===== 整体布局：左侧栏 + 主内容 ===== */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ===== 侧边栏 ===== */
+  .sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    position: sticky; top: 0; height: 100vh;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: 32px 24px;
   }
-  nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
-  .logo span { color: var(--muted); font-weight: 400; }
-  nav a { color: var(--muted); text-decoration: none; font-size: 14px; margin-left: 20px; }
-  nav a:hover { color: var(--text); }
+  .sidebar .logo { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .sidebar .logo span { color: var(--muted); font-weight: 400; font-size: 14px; }
+  .sidebar .sub { color: var(--muted); font-size: 12px; margin-bottom: 36px; }
+  .sidebar nav { display: flex; flex-direction: column; gap: 4px; }
+  .sidebar nav a {
+    color: var(--muted); font-size: 14px; padding: 8px 12px;
+    border-radius: 8px; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sidebar nav a:hover { background: #f3f4f6; color: var(--text); }
+  .sidebar nav a .num { font-size: 11px; color: #9ca3af; }
+  .sidebar .foot { margin-top: auto; color: #9ca3af; font-size: 12px; line-height: 1.8; }
+  .sidebar .foot b { display: block; color: var(--muted); font-size: 13px; }
 
-  .hero { padding: 80px 0 48px; text-align: center; }
-  .hero h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 800; letter-spacing: -1px; }
-  .hero p { color: var(--muted); margin-top: 12px; font-size: 16px; }
-  .hero .stats { margin-top: 20px; display: flex; gap: 28px; justify-content: center; }
+  /* ===== 主内容区 ===== */
+  .main { flex: 1; min-width: 0; padding: 48px 48px 64px; }
+
+  .hero { margin-bottom: 48px; }
+  .hero h1 { font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; letter-spacing: -1px; }
+  .hero p { color: var(--muted); margin-top: 8px; font-size: 15px; }
+  .hero .stats { margin-top: 20px; display: flex; gap: 28px; }
   .hero .stats div { font-size: 13px; color: var(--muted); }
   .hero .stats b { display: block; font-size: 22px; color: var(--text); }
 
-  .block { margin-bottom: 72px; }
+  .block { margin-bottom: 64px; scroll-margin-top: 24px; }
   .block h2 {
-    font-size: 20px; font-weight: 700; margin-bottom: 8px;
+    font-size: 20px; font-weight: 700; margin-bottom: 6px;
     display: flex; align-items: center; gap: 12px;
   }
   .block h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
   .block .group-desc { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
 
-  .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  /* ===== 作品网格（比例保持：视频 16:9，图片 4:3） ===== */
+  .grid {
+    display: grid; gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
   .card {
     border: 1px solid var(--border); border-radius: var(--radius);
     overflow: hidden; background: #fff;
@@ -60,7 +81,6 @@
     position: absolute; top: 10px; left: 10px; z-index: 2;
     background: rgba(0,0,0,0.65); color: #fff;
     font-size: 12px; padding: 4px 10px; border-radius: 999px;
-    display: flex; align-items: center; gap: 6px;
   }
   .card .badge.pending { background: rgba(234,179,8,0.9); color: #111; }
   .card .meta { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
@@ -68,66 +88,77 @@
   .card .meta span { font-size: 12px; color: var(--muted); background: #f3f4f6; padding: 3px 10px; border-radius: 999px; }
   .card .desc { padding: 0 16px 14px; font-size: 12px; color: var(--muted); }
 
-  footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--muted); font-size: 13px; }
-  footer .hint { margin-top: 8px; font-size: 12px; color: #9ca3af; }
-
-  @media (max-width: 600px) {
+  /* ===== 移动端：侧边栏收成顶部栏 ===== */
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    .sidebar {
+      width: 100%; height: auto; position: static;
+      flex-direction: row; align-items: center;
+      padding: 16px 24px; border-right: none; border-bottom: 1px solid var(--border);
+      flex-wrap: wrap; gap: 8px;
+    }
+    .sidebar .logo { margin: 0 16px 0 0; }
+    .sidebar .sub { display: none; }
+    .sidebar nav { flex-direction: row; flex-wrap: wrap; }
+    .sidebar nav a { padding: 6px 10px; font-size: 13px; }
+    .sidebar .foot { display: none; }
+    .main { padding: 32px 20px 48px; }
     .grid { grid-template-columns: 1fr; }
-    .hero { padding: 56px 0 36px; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="container">
-    <nav>
-      <div class="logo">作品集<span> · Portfolio</span></div>
-      <div id="navLinks"></div>
-    </nav>
-  </div>
-</header>
+<div class="layout">
 
-<section class="hero">
-  <div class="container">
-    <h1>我的作品集</h1>
-    <p>AE 动效 · AI 创作 · Maya 渲染 · 动画作品</p>
-    <div class="stats">
-      <div><b id="totalCount">0</b>全部作品</div>
-      <div><b id="videoCount">0</b>视频</div>
-      <div><b id="imageCount">0</b>图片</div>
+  <!-- ===== 左侧导航栏 ===== -->
+  <aside class="sidebar">
+    <div class="logo">作品集<span> · Portfolio</span></div>
+    <div class="sub">AE 动效 · AI 创作 · Maya 渲染 · 动画</div>
+    <nav id="navLinks"></nav>
+    <div class="foot">
+      <b>联系</b>
+      联系方式可在此处填写
+      <br>© 2026
     </div>
-  </div>
-</section>
+  </aside>
 
-<div id="groups"></div>
+  <!-- ===== 主内容区 ===== -->
+  <main class="main">
+    <section class="hero">
+      <h1>我的作品集</h1>
+      <p>AE 动效 · AI 创作 · Maya 渲染 · 动画作品</p>
+      <div class="stats">
+        <div><b id="totalCount">0</b>全部作品</div>
+        <div><b id="videoCount">0</b>视频</div>
+        <div><b id="imageCount">0</b>图片</div>
+      </div>
+    </section>
 
-<footer>
-  <div class="container">
-    <div>© 2026 · 作品集</div>
-    <div class="hint">黄色标记 = 待接入 B 站；拿到视频 BV 号后填入下方数据即可显示播放器。</div>
-  </div>
-</footer>
+    <div id="groups"></div>
+
+    <footer style="color:#9ca3af; font-size:12px; padding-top:32px; border-top:1px solid var(--border);">
+      黄色标记 = 待接入 B 站；拿到视频 BV 号后填入数据即可显示播放器。
+    </footer>
+  </main>
+
+</div>
 
 <script>
 // ===================== 作品数据 =====================
 // bv 字段: 填入 B 站视频 BV 号后，卡片自动变为 B 站播放器；留空则显示本地视频
 var works = [
-  // --- AI 创作 ---
   { file: "ai梦魇科普.mp4", title: "梦魇科普", tag: "AI", group: "AI 创作", bv: "" },
   { file: "ai王老吉广告.mp4", title: "王老吉广告", tag: "AI", group: "AI 创作", bv: "" },
 
-  // --- AE 动效 ---
   { file: "AE color.mp4", title: "Color", tag: "AE", group: "AE 动效", bv: "" },
   { file: "AE loading.mp4", title: "Loading", tag: "AE", group: "AE 动效", bv: "" },
   { file: "AE 信箱 (0-00-00-00).mp4", title: "信箱", tag: "AE", group: "AE 动效", bv: "" },
 
-  // --- Maya 渲染 ---
   { file: "maya房间渲染.jpg", title: "房间渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
   { file: "maya相机渲染.jpg", title: "相机渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
   { file: "maya黑色房间渲染.jpg", title: "黑色房间渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
 
-  // --- 动画作品 ---
   { file: "回忆.mp4", title: "回忆", tag: "动画", group: "动画作品", bv: "" },
   { file: "定格动画消防成品.mp4", title: "定格动画 · 消防成品", tag: "动画", group: "动画作品", bv: "" },
   { file: "珠宝快剪.mp4", title: "珠宝快剪", tag: "动画", group: "动画作品", bv: "" },
@@ -137,7 +168,6 @@ var works = [
 // ===================== 渲染 =====================
 function playerHtml(w) {
   if (w.bv) {
-    // 已有 B 站 BV 号 → 嵌入播放器
     return '<div class="player"><span class="badge">B 站</span>' +
       '<iframe src="//player.bilibili.com/player.html?bvid=' + w.bv + '&page=1&autoplay=0" ' +
       'scrolling="no" allowfullscreen></iframe></div>';
@@ -145,7 +175,6 @@ function playerHtml(w) {
   if (w.file.toLowerCase().endsWith(".jpg") || w.file.toLowerCase().endsWith(".png")) {
     return '<div class="player"><img src="' + w.file + '" alt="' + w.title + '" loading="lazy"></div>';
   }
-  // 未接入 B 站 → 显示本地视频 + 黄色待接入标记
   return '<div class="player"><span class="badge pending">待接入 B 站</span>' +
     '<video controls preload="metadata" playsinline src="' + w.file + '"></video></div>';
 }
@@ -156,7 +185,6 @@ function cardHtml(w) {
     '<div class="desc">' + w.file + '</div></div>';
 }
 
-// 按分组渲染
 var groupNames = [];
 var groups = {};
 works.forEach(function (w) {
@@ -166,20 +194,20 @@ works.forEach(function (w) {
 
 var groupsHtml = "";
 groupNames.forEach(function (g) {
-  groupsHtml += '<section class="block"><div class="container"><h2>' + g + '</h2>' +
+  groupsHtml += '<section class="block" id="' + g + '"><h2>' + g + '</h2>' +
     '<div class="group-desc">' + groups[g].length + ' 件作品</div>' +
-    '<div class="grid">' + groups[g].map(cardHtml).join("") + '</div></div></section>';
+    '<div class="grid">' + groups[g].map(cardHtml).join("") + '</div></section>';
 });
 document.getElementById("groups").innerHTML = groupsHtml;
 
-// 导航链接
+// 侧边栏导航
 document.getElementById("navLinks").innerHTML = groupNames.map(function (g) {
-  return '<a href="#' + g + '">' + g + '</a>';
+  return '<a href="#' + g + '">' + g + '<span class="num">' + groups[g].length + '</span></a>';
 }).join("");
 
 // 统计
 var videoN = works.filter(function (w) { return w.file.toLowerCase().indexOf(".mp4") > -1; }).length;
-var imageN = works.filter(function (w) { return w.file.toLowerCase().indexOf(".mp4") === -1; }).length;
+var imageN = works.length - videoN;
 document.getElementById("totalCount").textContent = works.length;
 document.getElementById("videoCount").textContent = videoN;
 document.getElementById("imageCount").textContent = imageN;
