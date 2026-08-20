@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作品集 · Portfolio</title>
+<style>
+  :root {
+    --bg: #ffffff; --text: #111111; --muted: #6b7280;
+    --border: #e5e7eb; --radius: 12px; --maxw: 1200px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+  .logo span { color: var(--muted); font-weight: 400; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 14px; margin-left: 20px; }
+  nav a:hover { color: var(--text); }
+
+  .hero { padding: 80px 0 48px; text-align: center; }
+  .hero h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 800; letter-spacing: -1px; }
+  .hero p { color: var(--muted); margin-top: 12px; font-size: 16px; }
+  .hero .stats { margin-top: 20px; display: flex; gap: 28px; justify-content: center; }
+  .hero .stats div { font-size: 13px; color: var(--muted); }
+  .hero .stats b { display: block; font-size: 22px; color: var(--text); }
+
+  .block { margin-bottom: 72px; }
+  .block h2 {
+    font-size: 20px; font-weight: 700; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .block h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .block .group-desc { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+
+  .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  .card {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; background: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+  .card .player { position: relative; background: #f3f4f6; }
+  .card video, .card img { width: 100%; display: block; object-fit: cover; }
+  .card video { aspect-ratio: 16/9; }
+  .card img { aspect-ratio: 4/3; }
+  .card .player iframe { width: 100%; aspect-ratio: 16/9; border: 0; display: block; }
+  .card .badge {
+    position: absolute; top: 10px; left: 10px; z-index: 2;
+    background: rgba(0,0,0,0.65); color: #fff;
+    font-size: 12px; padding: 4px 10px; border-radius: 999px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card .badge.pending { background: rgba(234,179,8,0.9); color: #111; }
+  .card .meta { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .card .meta h3 { font-size: 15px; font-weight: 600; }
+  .card .meta span { font-size: 12px; color: var(--muted); background: #f3f4f6; padding: 3px 10px; border-radius: 999px; }
+  .card .desc { padding: 0 16px 14px; font-size: 12px; color: var(--muted); }
+
+  footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--muted); font-size: 13px; }
+  footer .hint { margin-top: 8px; font-size: 12px; color: #9ca3af; }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero { padding: 56px 0 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav>
+      <div class="logo">作品集<span> · Portfolio</span></div>
+      <div id="navLinks"></div>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>我的作品集</h1>
+    <p>AE 动效 · AI 创作 · Maya 渲染 · 动画作品</p>
+    <div class="stats">
+      <div><b id="totalCount">0</b>全部作品</div>
+      <div><b id="videoCount">0</b>视频</div>
+      <div><b id="imageCount">0</b>图片</div>
+    </div>
+  </div>
+</section>
+
+<div id="groups"></div>
+
+<footer>
+  <div class="container">
+    <div>© 2026 · 作品集</div>
+    <div class="hint">黄色标记 = 待接入 B 站；拿到视频 BV 号后填入下方数据即可显示播放器。</div>
+  </div>
+</footer>
+
+<script>
+// ===================== 作品数据 =====================
+// bv 字段: 填入 B 站视频 BV 号后，卡片自动变为 B 站播放器；留空则显示本地视频
+var works = [
+  // --- AI 创作 ---
+  { file: "ai梦魇科普.mp4", title: "梦魇科普", tag: "AI", group: "AI 创作", bv: "" },
+  { file: "ai王老吉广告.mp4", title: "王老吉广告", tag: "AI", group: "AI 创作", bv: "" },
+
+  // --- AE 动效 ---
+  { file: "AE color.mp4", title: "Color", tag: "AE", group: "AE 动效", bv: "" },
+  { file: "AE loading.mp4", title: "Loading", tag: "AE", group: "AE 动效", bv: "" },
+  { file: "AE 信箱 (0-00-00-00).mp4", title: "信箱", tag: "AE", group: "AE 动效", bv: "" },
+
+  // --- Maya 渲染 ---
+  { file: "maya房间渲染.jpg", title: "房间渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
+  { file: "maya相机渲染.jpg", title: "相机渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
+  { file: "maya黑色房间渲染.jpg", title: "黑色房间渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
+
+  // --- 动画作品 ---
+  { file: "回忆.mp4", title: "回忆", tag: "动画", group: "动画作品", bv: "" },
+  { file: "定格动画消防成品.mp4", title: "定格动画 · 消防成品", tag: "动画", group: "动画作品", bv: "" },
+  { file: "珠宝快剪.mp4", title: "珠宝快剪", tag: "动画", group: "动画作品", bv: "" },
+  { file: "网上接单视频.mp4", title: "网上接单", tag: "动画", group: "动画作品", bv: "" }
+];
+
+// ===================== 渲染 =====================
+function playerHtml(w) {
+  if (w.bv) {
+    // 已有 B 站 BV 号 → 嵌入播放器
+    return '<div class="player"><span class="badge">B 站</span>' +
+      '<iframe src="//player.bilibili.com/player.html?bvid=' + w.bv + '&page=1&autoplay=0" ' +
+      'scrolling="no" allowfullscreen></iframe></div>';
+  }
+  if (w.file.toLowerCase().endsWith(".jpg") || w.file.toLowerCase().endsWith(".png")) {
+    return '<div class="player"><img src="' + w.file + '" alt="' + w.title + '" loading="lazy"></div>';
+  }
+  // 未接入 B 站 → 显示本地视频 + 黄色待接入标记
+  return '<div class="player"><span class="badge pending">待接入 B 站</span>' +
+    '<video controls preload="metadata" playsinline src="' + w.file + '"></video></div>';
+}
+
+function cardHtml(w) {
+  return '<div class="card">' + playerHtml(w) +
+    '<div class="meta"><h3>' + w.title + '</h3><span>' + w.tag + '</span></div>' +
+    '<div class="desc">' + w.file + '</div></div>';
+}
+
+// 按分组渲染
+var groupNames = [];
+var groups = {};
+works.forEach(function (w) {
+  if (!groups[w.group]) { groups[w.group] = []; groupNames.push(w.group); }
+  groups[w.group].push(w);
+});
+
+var groupsHtml = "";
+groupNames.forEach(function (g) {
+  groupsHtml += '<section class="block"><div class="container"><h2>' + g + '</h2>' +
+    '<div class="group-desc">' + groups[g].length + ' 件作品</div>' +
+    '<div class="grid">' + groups[g].map(cardHtml).join("") + '</div></div></section>';
+});
+document.getElementById("groups").innerHTML = groupsHtml;
+
+// 导航链接
+document.getElementById("navLinks").innerHTML = groupNames.map(function (g) {
+  return '<a href="#' + g + '">' + g + '</a>';
+}).join("");
+
+// 统计
+var videoN = works.filter(function (w) { return w.file.toLowerCase().indexOf(".mp4") > -1; }).length;
+var imageN = works.filter(function (w) { return w.file.toLowerCase().indexOf(".mp4") === -1; }).length;
+document.getElementById("totalCount").textContent = works.length;
+document.getElementById("videoCount").textContent = videoN;
+document.getElementById("imageCount").textContent = imageN;
+</script>
+</body>
+</html>
