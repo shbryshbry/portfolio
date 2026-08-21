@@ -9,6 +9,7 @@
     --bg: #ffffff; --text: #111111; --muted: #6b7280;
     --border: #e5e7eb; --radius: 12px; --sidebar-w: 260px;
     --accent: #3b82f6; --accent-light: #eff6ff;
+    --gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -21,7 +22,7 @@
   a { text-decoration: none; }
   html { scroll-behavior: smooth; }
 
-  /* ===== 整体布局：侧边栏 + 主内容 ===== */
+  /* ===== 布局 ===== */
   .layout { display: flex; min-height: 100vh; }
 
   /* ===== 侧边栏 ===== */
@@ -60,21 +61,43 @@
     padding: 48px 48px 64px;
   }
 
+  /* ===== Hero 标题特效 ===== */
   .hero { margin-bottom: 48px; position: relative; }
   .hero h1 {
-    font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; letter-spacing: -1px;
+    font-size: clamp(32px, 4vw, 52px); font-weight: 800; letter-spacing: -1px;
+    background: var(--gradient); -webkit-background-clip: text;
+    background-clip: text; color: transparent;
     animation: heroIn 0.8s ease both;
+    position: relative; display: inline-block;
   }
-  .hero p { color: var(--muted); margin-top: 8px; font-size: 15px; animation: heroIn 0.8s 0.1s ease both; }
+  .hero h1::after {
+    content: ""; position: absolute; bottom: -4px; left: 0;
+    width: 100%; height: 3px; background: var(--gradient);
+    border-radius: 2px; transform: scaleX(0); transform-origin: left;
+    animation: underlineIn 0.8s 0.4s ease both;
+  }
+  @keyframes underlineIn { to { transform: scaleX(1); } }
+
+  .hero p {
+    color: var(--muted); margin-top: 16px; font-size: 15px;
+    animation: heroIn 0.8s 0.1s ease both;
+    letter-spacing: 0.5px;
+  }
   .hero .stats {
-    margin-top: 20px; display: flex; gap: 28px;
+    margin-top: 24px; display: flex; gap: 28px;
     animation: heroIn 0.8s 0.2s ease both;
   }
   .hero .stats div { font-size: 13px; color: var(--muted); }
-  .hero .stats b { display: block; font-size: 22px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .hero .stats b {
+    display: block; font-size: 24px; font-weight: 700;
+    background: var(--gradient); -webkit-background-clip: text;
+    background-clip: text; color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
 
   @keyframes heroIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
+  /* ===== 分组区块 ===== */
   .block {
     margin-bottom: 64px; scroll-margin-top: 24px;
     position: relative;
@@ -82,16 +105,34 @@
   .block::before {
     content: ""; position: absolute; left: -24px; top: 0;
     width: 4px; height: 100%; border-radius: 2px;
-    background: linear-gradient(180deg, var(--accent), transparent);
-    opacity: 0; transition: opacity 0.4s ease;
+    background: var(--gradient); opacity: 0;
+    transition: opacity 0.4s ease;
   }
-  .block.in::before { opacity: 1; }
+  .block.in::before { opacity: 0.6; }
+
   .block h2 {
-    font-size: 20px; font-weight: 700; margin-bottom: 6px;
+    font-size: 22px; font-weight: 700; margin-bottom: 6px;
     display: flex; align-items: center; gap: 12px;
+    position: relative; overflow: hidden;
   }
-  .block h2::after { content: ""; flex: 1; height: 1px; background: var(--border); transform: scaleX(0); transform-origin: left; transition: transform 0.6s ease; }
+  .block h2 .title-text {
+    display: inline-block;
+    animation: titleSlide 0.6s ease both;
+  }
+  .block h2::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.6s ease;
+  }
   .block.in h2::after { transform: scaleX(1); }
+  .block.in h2 .title-text { animation: titleSlide 0.6s ease both; }
+
+  @keyframes titleSlide {
+    from { opacity: 0; transform: translateX(-16px); }
+    to { opacity: 1; transform: none; }
+  }
+
   .block .group-desc { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
 
   /* ===== 作品网格 ===== */
@@ -106,13 +147,22 @@
     transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     will-change: opacity, transform;
     cursor: pointer;
+    position: relative;
   }
   .card.in { opacity: 1; transform: none; }
   .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(59,130,246,0.08);
-    border-color: rgba(59,130,246,0.2);
+    box-shadow: 0 12px 32px rgba(59,130,246,0.1);
+    border-color: rgba(59,130,246,0.25);
   }
+  .card::after {
+    content: ""; position: absolute; inset: 0;
+    background: var(--gradient); opacity: 0;
+    transition: opacity 0.3s ease; pointer-events: none;
+    border-radius: var(--radius);
+  }
+  .card:hover::after { opacity: 0.03; }
+
   .card .player { position: relative; background: #f3f4f6; overflow: hidden; }
   .card video, .card img { width: 100%; display: block; object-fit: cover; }
   .card video { aspect-ratio: 16/9; pointer-events: none; }
@@ -122,6 +172,7 @@
     position: absolute; top: 10px; left: 10px; z-index: 2;
     background: rgba(0,0,0,0.65); color: #fff;
     font-size: 12px; padding: 4px 10px; border-radius: 999px;
+    backdrop-filter: blur(4px);
   }
   .card .badge.pending { background: rgba(234,179,8,0.9); color: #111; }
   .card .meta { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
@@ -129,7 +180,7 @@
   .card .meta span { font-size: 12px; color: var(--muted); background: #f3f4f6; padding: 3px 10px; border-radius: 999px; }
   .card .desc { padding: 0 16px 14px; font-size: 12px; color: var(--muted); }
 
-  /* ===== 灯箱：图片/视频查看 ===== */
+  /* ===== 灯箱 ===== */
   .lightbox {
     position: fixed; inset: 0; z-index: 10000;
     background: rgba(0,0,0,0.92); display: flex;
@@ -220,7 +271,6 @@
 
 <div class="layout">
 
-  <!-- 左侧导航栏 -->
   <aside class="sidebar">
     <div class="logo">作品集<span> · Portfolio</span></div>
     <div class="sub">AE 动效 · AI 创作 · Maya 渲染 · 动画</div>
@@ -232,7 +282,6 @@
     </div>
   </aside>
 
-  <!-- 主内容区 -->
   <main class="main">
     <section class="hero">
       <h1>我的作品集</h1>
@@ -253,13 +302,11 @@
 
 </div>
 
-<!-- 灯箱 -->
 <div class="lightbox" id="lightbox">
   <button class="close" aria-label="关闭">×</button>
   <img src="" alt="">
 </div>
 
-<!-- 鼠标光晕 -->
 <div class="cursor-dot"></div>
 <div class="cursor-halo"></div>
 
@@ -309,18 +356,16 @@ works.forEach(function (w) {
 var groupsHtml = "";
 groupNames.forEach(function (g) {
   var items = groups[g].map(cardHtml).join("");
-  groupsHtml += '<section class="block" id="' + g + '"><h2>' + g + '</h2>' +
+  groupsHtml += '<section class="block" id="' + g + '"><h2><span class="title-text">' + g + '</span></h2>' +
     '<div class="group-desc">' + groups[g].length + ' 件作品</div>' +
     '<div class="grid">' + items + '</div></section>';
 });
 document.getElementById("groups").innerHTML = groupsHtml;
 
-// 侧边栏导航
 document.getElementById("navLinks").innerHTML = groupNames.map(function (g) {
   return '<a href="#' + g + '">' + g + '<span class="num">' + groups[g].length + '</span></a>';
 }).join("");
 
-// 统计数字
 var videoN = works.filter(function (w) { return w.file.toLowerCase().indexOf(".mp4") > -1; }).length;
 var imageN = works.length - videoN;
 var counts = [works.length, videoN, imageN];
@@ -330,7 +375,7 @@ countEls.forEach(function (el, i) {
   el.textContent = "0";
 });
 
-// ===================== 滚动渐入 =====================
+// ===================== 滚动渐入 + 侧边栏高亮修复 =====================
 function initReveal() {
   var els = document.querySelectorAll(".block, .card");
   var navLinks = document.querySelectorAll(".sidebar nav a");
@@ -350,12 +395,23 @@ function initReveal() {
     requestAnimationFrame(step);
   }
 
+  // 修复：滚动到底部时最后一个分组正确高亮
   function highlightNav() {
-    var pos = window.scrollY + 80;
+    var scrollTop = window.scrollY || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight;
+    var winHeight = window.innerHeight;
     var current = "";
-    blocks.forEach(function (b) {
-      if (b.offsetTop <= pos) current = b.id;
-    });
+
+    // 如果滚动到底部，直接高亮最后一个分组
+    if (scrollTop + winHeight >= docHeight - 20) {
+      current = groupNames[groupNames.length - 1];
+    } else {
+      blocks.forEach(function (b) {
+        var rect = b.getBoundingClientRect();
+        if (rect.top <= 120) current = b.id;
+      });
+    }
+
     navLinks.forEach(function (a) {
       a.classList.toggle("active", a.getAttribute("href") === "#" + current);
     });
@@ -386,7 +442,7 @@ function initReveal() {
 }
 initReveal();
 
-// ===================== 灯箱：点击查看完整 =====================
+// ===================== 灯箱 =====================
 (function () {
   var lightbox = document.getElementById("lightbox");
   var lbImg = lightbox.querySelector("img");
@@ -397,11 +453,9 @@ initReveal();
     var file = card.getAttribute("data-file");
 
     card.addEventListener("click", function (e) {
-      // B 站 iframe 或已有播放器不拦截
       if (e.target.closest("iframe")) return;
 
       if (type === "video" && !file.toLowerCase().endsWith(".jpg")) {
-        // 视频：弹出播放器
         var videoEl = card.querySelector("video");
         if (videoEl) {
           var lbVideo = document.createElement("video");
@@ -413,18 +467,15 @@ initReveal();
           lightbox.appendChild(closeBtn);
           lightbox.appendChild(lbVideo);
           lightbox.classList.add("open");
-          // 重新绑定关闭按钮
           closeBtn.onclick = function () {
             lbVideo.pause();
             lightbox.classList.remove("open");
-            // 恢复 img
             lightbox.innerHTML = '';
             lightbox.appendChild(closeBtn);
             lightbox.appendChild(lbImg);
           };
         }
       } else {
-        // 图片：弹出大图
         var imgEl = card.querySelector("img");
         if (imgEl) {
           lbImg.src = imgEl.src;
@@ -437,10 +488,8 @@ initReveal();
 
   function closeLightbox() {
     lightbox.classList.remove("open");
-    // 如果是视频，停止播放
     var playingVideo = lightbox.querySelector("video");
     if (playingVideo) playingVideo.pause();
-    // 恢复 img 结构
     if (!lightbox.querySelector("img")) {
       lightbox.innerHTML = '';
       lightbox.appendChild(closeBtn);
