@@ -8,6 +8,7 @@
   :root {
     --bg: #ffffff; --text: #111111; --muted: #6b7280;
     --border: #e5e7eb; --radius: 12px; --sidebar-w: 260px;
+    --accent: #3b82f6; --accent-light: #eff6ff;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -15,22 +16,23 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
                  "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   a { text-decoration: none; }
-
   html { scroll-behavior: smooth; }
 
-  /* ===== 整体布局：左侧栏 + 主内容 ===== */
+  /* ===== 整体布局：侧边栏 + 主内容 ===== */
   .layout { display: flex; min-height: 100vh; }
 
   /* ===== 侧边栏 ===== */
   .sidebar {
     width: var(--sidebar-w); flex-shrink: 0;
-    position: sticky; top: 0; height: 100vh;
+    position: fixed; top: 0; left: 0; height: 100vh;
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
     padding: 32px 24px;
-    background: #fff;
+    background: linear-gradient(180deg, #fafbfc 0%, #f3f4f6 100%);
+    z-index: 100;
   }
   .sidebar .logo { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
   .sidebar .logo span { color: var(--muted); font-weight: 400; font-size: 14px; }
@@ -42,31 +44,48 @@
     display: flex; align-items: center; justify-content: space-between;
     border-left: 2px solid transparent;
   }
-  .sidebar nav a:hover { background: #f3f4f6; color: var(--text); }
+  .sidebar nav a:hover { background: rgba(59,130,246,0.06); color: var(--accent); }
   .sidebar nav a.active {
-    background: #f3f4f6; color: var(--text); font-weight: 600;
-    border-left-color: var(--text);
+    background: rgba(59,130,246,0.08); color: var(--accent); font-weight: 600;
+    border-left-color: var(--accent);
   }
   .sidebar nav a .num { font-size: 11px; color: #9ca3af; }
   .sidebar .foot { margin-top: auto; color: #9ca3af; font-size: 12px; line-height: 1.8; }
   .sidebar .foot b { display: block; color: var(--muted); font-size: 13px; }
 
   /* ===== 主内容区 ===== */
-  .main { flex: 1; min-width: 0; padding: 48px 48px 64px; }
+  .main {
+    flex: 1; min-width: 0;
+    margin-left: var(--sidebar-w);
+    padding: 48px 48px 64px;
+  }
 
-  .hero { margin-bottom: 48px; }
+  .hero { margin-bottom: 48px; position: relative; }
   .hero h1 {
     font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; letter-spacing: -1px;
     animation: heroIn 0.8s ease both;
   }
   .hero p { color: var(--muted); margin-top: 8px; font-size: 15px; animation: heroIn 0.8s 0.1s ease both; }
-  .hero .stats { margin-top: 20px; display: flex; gap: 28px; animation: heroIn 0.8s 0.2s ease both; }
+  .hero .stats {
+    margin-top: 20px; display: flex; gap: 28px;
+    animation: heroIn 0.8s 0.2s ease both;
+  }
   .hero .stats div { font-size: 13px; color: var(--muted); }
   .hero .stats b { display: block; font-size: 22px; color: var(--text); font-variant-numeric: tabular-nums; }
 
   @keyframes heroIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
-  .block { margin-bottom: 64px; scroll-margin-top: 24px; }
+  .block {
+    margin-bottom: 64px; scroll-margin-top: 24px;
+    position: relative;
+  }
+  .block::before {
+    content: ""; position: absolute; left: -24px; top: 0;
+    width: 4px; height: 100%; border-radius: 2px;
+    background: linear-gradient(180deg, var(--accent), transparent);
+    opacity: 0; transition: opacity 0.4s ease;
+  }
+  .block.in::before { opacity: 1; }
   .block h2 {
     font-size: 20px; font-weight: 700; margin-bottom: 6px;
     display: flex; align-items: center; gap: 12px;
@@ -75,7 +94,7 @@
   .block.in h2::after { transform: scaleX(1); }
   .block .group-desc { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
 
-  /* ===== 作品网格（比例保持：视频 16:9，图片 4:3） ===== */
+  /* ===== 作品网格 ===== */
   .grid {
     display: grid; gap: 24px;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -84,14 +103,19 @@
     border: 1px solid var(--border); border-radius: var(--radius);
     overflow: hidden; background: #fff;
     opacity: 0; transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.25s ease;
+    transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     will-change: opacity, transform;
+    cursor: pointer;
   }
   .card.in { opacity: 1; transform: none; }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
-  .card .player { position: relative; background: #f3f4f6; }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(59,130,246,0.08);
+    border-color: rgba(59,130,246,0.2);
+  }
+  .card .player { position: relative; background: #f3f4f6; overflow: hidden; }
   .card video, .card img { width: 100%; display: block; object-fit: cover; }
-  .card video { aspect-ratio: 16/9; }
+  .card video { aspect-ratio: 16/9; pointer-events: none; }
   .card img { aspect-ratio: 4/3; }
   .card .player iframe { width: 100%; aspect-ratio: 16/9; border: 0; display: block; }
   .card .badge {
@@ -105,7 +129,67 @@
   .card .meta span { font-size: 12px; color: var(--muted); background: #f3f4f6; padding: 3px 10px; border-radius: 999px; }
   .card .desc { padding: 0 16px 14px; font-size: 12px; color: var(--muted); }
 
-  /* ===== 移动端：侧边栏收成顶部栏 ===== */
+  /* ===== 灯箱：图片/视频查看 ===== */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.92); display: flex;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .lightbox.open { opacity: 1; pointer-events: auto; }
+  .lightbox img, .lightbox video {
+    max-width: 92vw; max-height: 88vh; border-radius: 8px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    transform: scale(0.92); transition: transform 0.3s ease;
+    background: #000;
+  }
+  .lightbox.open img, .lightbox.open video { transform: scale(1); }
+  .lightbox .close {
+    position: absolute; top: 20px; right: 24px; width: 40px; height: 40px;
+    border-radius: 50%; background: rgba(255,255,255,0.12);
+    border: none; color: #fff; font-size: 22px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .lightbox .close:hover { background: rgba(255,255,255,0.25); }
+
+  /* ===== 鼠标光晕 ===== */
+  .cursor-dot, .cursor-halo {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+    border-radius: 50%; transform: translate(-50%, -50%);
+  }
+  .cursor-dot { width: 8px; height: 8px; background: var(--text); transition: transform 0.08s ease; }
+  .cursor-halo {
+    width: 40px; height: 40px;
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.18);
+  }
+  .cursor-halo.hovering { width: 64px; height: 64px; background: rgba(59,130,246,0.03); }
+
+  /* ===== 呼吸按钮 ===== */
+  .btn-breathe {
+    display: inline-block; padding: 10px 22px;
+    border: 1px solid var(--accent); border-radius: 999px;
+    color: var(--accent); font-size: 14px; font-weight: 600;
+    background: #fff; cursor: pointer; text-align: center;
+    animation: breathe 2.4s ease-in-out infinite;
+    transition: all 0.2s ease;
+  }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.2); }
+    50%      { box-shadow: 0 0 0 10px rgba(59,130,246,0); }
+  }
+  .btn-breathe:hover { background: var(--accent); color: #fff; animation-play-state: paused; box-shadow: none; }
+
+  /* ===== 点击脉冲 ===== */
+  .pulse { animation: pulseRing 0.6s ease-out; }
+  @keyframes pulseRing {
+    0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.3); }
+    100% { box-shadow: 0 0 0 20px rgba(59,130,246,0); }
+  }
+
+  /* ===== 移动端适配 ===== */
   @media (max-width: 860px) {
     .layout { flex-direction: column; }
     .sidebar {
@@ -118,51 +202,11 @@
     .sidebar .sub { display: none; }
     .sidebar nav { flex-direction: row; flex-wrap: wrap; }
     .sidebar nav a { padding: 6px 10px; font-size: 13px; border-left: none; }
-    .sidebar nav a.active { border-bottom: 2px solid var(--text); border-left-color: transparent; }
+    .sidebar nav a.active { border-bottom: 2px solid var(--accent); border-left-color: transparent; }
     .sidebar .foot { display: none; }
-    .main { padding: 32px 20px 48px; }
+    .main { margin-left: 0; padding: 32px 20px 48px; }
     .grid { grid-template-columns: 1fr; }
-  }
-
-  /* ===== 减弱动态偏好时关闭动画 ===== */
-  /* ===== 鼠标跟随光晕 ===== */
-  .cursor-dot, .cursor-halo {
-    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
-    border-radius: 50%; transform: translate(-50%, -50%);
-  }
-  .cursor-dot {
-    width: 8px; height: 8px; background: var(--text);
-    transition: transform 0.08s ease;
-  }
-  .cursor-halo {
-    width: 40px; height: 40px;
-    background: rgba(17,17,17,0.06);
-    border: 1px solid rgba(17,17,17,0.15);
-  }
-  /* 悬停链接/卡片时光晕放大 */
-  .cursor-halo.hovering { width: 64px; height: 64px; background: rgba(17,17,17,0.03); }
-
-  /* ===== 呼吸按钮 ===== */
-  .btn-breathe {
-    display: inline-block; padding: 10px 22px;
-    border: 1px solid var(--text); border-radius: 999px;
-    color: var(--text); font-size: 14px; font-weight: 600;
-    background: #fff; cursor: pointer; text-align: center;
-    animation: breathe 2.4s ease-in-out infinite;
-  }
-  @keyframes breathe {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(17,17,17,0.18); }
-    50%      { box-shadow: 0 0 0 12px rgba(17,17,17,0); }
-  }
-  .btn-breathe:hover { background: var(--text); color: #fff; animation-play-state: paused; box-shadow: none; }
-
-  /* ===== 点击脉冲呼吸 ===== */
-  .pulse {
-    animation: pulseRing 0.7s ease-out;
-  }
-  @keyframes pulseRing {
-    0%   { box-shadow: 0 0 0 0 rgba(17,17,17,0.25); }
-    100% { box-shadow: 0 0 0 24px rgba(17,17,17,0); }
+    .block::before { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -170,40 +214,13 @@
     .card { opacity: 1; transform: none; }
     .btn-breathe { animation: none; }
   }
-
-  /* ===== 灯箱：点击图片查看大图 ===== */
-  .lightbox {
-    position: fixed; inset: 0; z-index: 10000;
-    background: rgba(0,0,0,0.88); display: flex;
-    align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  .lightbox.open { opacity: 1; pointer-events: auto; }
-  .lightbox img {
-    max-width: 90vw; max-height: 88vh; border-radius: 8px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-    transform: scale(0.92); transition: transform 0.3s ease;
-  }
-  .lightbox.open img { transform: scale(1); }
-  .lightbox .close {
-    position: absolute; top: 20px; right: 24px; width: 40px; height: 40px;
-    border-radius: 50%; background: rgba(255,255,255,0.12);
-    border: none; color: #fff; font-size: 22px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-  }
-  .lightbox .close:hover { background: rgba(255,255,255,0.25); }
-  @media (prefers-reduced-motion: reduce) {
-    .lightbox, .lightbox img { transition: none; }
-  }
 </style>
 </head>
 <body>
 
 <div class="layout">
 
-  <!-- ===== 左侧导航栏 ===== -->
+  <!-- 左侧导航栏 -->
   <aside class="sidebar">
     <div class="logo">作品集<span> · Portfolio</span></div>
     <div class="sub">AE 动效 · AI 创作 · Maya 渲染 · 动画</div>
@@ -215,7 +232,7 @@
     </div>
   </aside>
 
-  <!-- ===== 主内容区 ===== -->
+  <!-- 主内容区 -->
   <main class="main">
     <section class="hero">
       <h1>我的作品集</h1>
@@ -236,42 +253,36 @@
 
 </div>
 
-<div class="cursor-dot"></div>
-<div class="cursor-halo"></div>
-
-<!-- 灯箱：点击图片查看大图 -->
+<!-- 灯箱 -->
 <div class="lightbox" id="lightbox">
   <button class="close" aria-label="关闭">×</button>
   <img src="" alt="">
 </div>
 
+<!-- 鼠标光晕 -->
+<div class="cursor-dot"></div>
+<div class="cursor-halo"></div>
+
 <script>
-// ===================== 作品数据 =====================
-// bv 字段: 填入 B 站视频 BV 号后，卡片自动变为 B 站播放器；留空则显示本地视频
 var works = [
   { file: "ai梦魇科普.mp4", title: "梦魇科普", tag: "AI", group: "AI 创作", bv: "" },
   { file: "ai王老吉广告.mp4", title: "王老吉广告", tag: "AI", group: "AI 创作", bv: "" },
-
   { file: "AE color.mp4", title: "Color", tag: "AE", group: "AE 动效", bv: "" },
   { file: "AE loading.mp4", title: "Loading", tag: "AE", group: "AE 动效", bv: "" },
   { file: "AE 信箱 (0-00-00-00).mp4", title: "信箱", tag: "AE", group: "AE 动效", bv: "" },
-
   { file: "maya房间渲染.jpg", title: "房间渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
   { file: "maya相机渲染.jpg", title: "相机渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
   { file: "maya黑色房间渲染.jpg", title: "黑色房间渲染", tag: "Maya", group: "Maya 渲染", bv: "" },
-
   { file: "回忆.mp4", title: "回忆", tag: "动画", group: "动画作品", bv: "" },
   { file: "定格动画消防成品.mp4", title: "定格动画 · 消防成品", tag: "动画", group: "动画作品", bv: "" },
   { file: "珠宝快剪.mp4", title: "珠宝快剪", tag: "动画", group: "动画作品", bv: "" },
   { file: "网上接单视频.mp4", title: "网上接单", tag: "动画", group: "动画作品", bv: "" }
 ];
 
-// ===================== 渲染 =====================
 function playerHtml(w) {
   if (w.bv) {
     return '<div class="player"><span class="badge">B 站</span>' +
-      '<iframe src="//player.bilibili.com/player.html?bvid=' + w.bv + '&page=1&autoplay=0" ' +
-      'scrolling="no" allowfullscreen></iframe></div>';
+      '<iframe src="//player.bilibili.com/player.html?bvid=' + w.bv + '&page=1&autoplay=0" scrolling="no" allowfullscreen></iframe></div>';
   }
   if (w.file.toLowerCase().endsWith(".jpg") || w.file.toLowerCase().endsWith(".png")) {
     return '<div class="player"><img src="' + w.file + '" alt="' + w.title + '" loading="lazy"></div>';
@@ -281,9 +292,9 @@ function playerHtml(w) {
 }
 
 function cardHtml(w, i) {
-  // 错峰浮现：每个卡片按顺序延迟
   var delay = ' style="transition-delay:' + (i * 70) + 'ms"';
-  return '<div class="card"' + delay + '>' + playerHtml(w) +
+  return '<div class="card"' + delay + ' data-type="' + (w.file.toLowerCase().endsWith(".mp4") ? "video" : "image") + '" data-file="' + w.file + '">' +
+    playerHtml(w) +
     '<div class="meta"><h3>' + w.title + '</h3><span>' + w.tag + '</span></div>' +
     '<div class="desc">' + w.file + '</div></div>';
 }
@@ -319,7 +330,7 @@ countEls.forEach(function (el, i) {
   el.textContent = "0";
 });
 
-// ===================== 滚动渐入动效 =====================
+// ===================== 滚动渐入 =====================
 function initReveal() {
   var els = document.querySelectorAll(".block, .card");
   var navLinks = document.querySelectorAll(".sidebar nav a");
@@ -332,7 +343,7 @@ function initReveal() {
     function step(ts) {
       if (!t0) t0 = ts;
       var p = Math.min((ts - t0) / dur, 1);
-      var eased = 1 - Math.pow(1 - p, 3); // ease-out
+      var eased = 1 - Math.pow(1 - p, 3);
       el.textContent = Math.round(to * eased);
       if (p < 1) requestAnimationFrame(step);
     }
@@ -355,7 +366,6 @@ function initReveal() {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
           e.target.classList.add("in");
-          // 统计数字滚动一次
           if (!countDone && e.target.classList.contains("block")) {
             countDone = true;
             countEls.forEach(animateCount);
@@ -364,39 +374,80 @@ function initReveal() {
         }
       });
     }, { threshold: 0.08 });
-
     els.forEach(function (el) { io.observe(el); });
     blocks.forEach(function (b) { io.observe(b); });
   } else {
-    // 不支持 IntersectionObserver 时直接显示
     els.forEach(function (el) { el.classList.add("in"); });
     countEls.forEach(animateCount);
   }
 
-  // 导航高亮跟随滚动
   window.addEventListener("scroll", highlightNav, { passive: true });
   highlightNav();
 }
 initReveal();
 
-// ===================== 灯箱：点击图片查看大图 =====================
+// ===================== 灯箱：点击查看完整 =====================
 (function () {
   var lightbox = document.getElementById("lightbox");
   var lbImg = lightbox.querySelector("img");
   var closeBtn = lightbox.querySelector(".close");
 
-  // 绑定所有图片卡片点击
-  document.querySelectorAll(".card img").forEach(function (img) {
-    img.style.cursor = "zoom-in";
-    img.addEventListener("click", function (e) {
-      e.stopPropagation();
-      lbImg.src = img.src;
-      lbImg.alt = img.alt;
-      lightbox.classList.add("open");
+  document.querySelectorAll(".card").forEach(function (card) {
+    var type = card.getAttribute("data-type");
+    var file = card.getAttribute("data-file");
+
+    card.addEventListener("click", function (e) {
+      // B 站 iframe 或已有播放器不拦截
+      if (e.target.closest("iframe")) return;
+
+      if (type === "video" && !file.toLowerCase().endsWith(".jpg")) {
+        // 视频：弹出播放器
+        var videoEl = card.querySelector("video");
+        if (videoEl) {
+          var lbVideo = document.createElement("video");
+          lbVideo.src = videoEl.src;
+          lbVideo.controls = true;
+          lbVideo.autoplay = true;
+          lbVideo.style.cssText = "max-width:92vw;max-height:88vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.4);background:#000";
+          lightbox.innerHTML = '';
+          lightbox.appendChild(closeBtn);
+          lightbox.appendChild(lbVideo);
+          lightbox.classList.add("open");
+          // 重新绑定关闭按钮
+          closeBtn.onclick = function () {
+            lbVideo.pause();
+            lightbox.classList.remove("open");
+            // 恢复 img
+            lightbox.innerHTML = '';
+            lightbox.appendChild(closeBtn);
+            lightbox.appendChild(lbImg);
+          };
+        }
+      } else {
+        // 图片：弹出大图
+        var imgEl = card.querySelector("img");
+        if (imgEl) {
+          lbImg.src = imgEl.src;
+          lbImg.alt = imgEl.alt;
+          lightbox.classList.add("open");
+        }
+      }
     });
   });
 
-  function closeLightbox() { lightbox.classList.remove("open"); }
+  function closeLightbox() {
+    lightbox.classList.remove("open");
+    // 如果是视频，停止播放
+    var playingVideo = lightbox.querySelector("video");
+    if (playingVideo) playingVideo.pause();
+    // 恢复 img 结构
+    if (!lightbox.querySelector("img")) {
+      lightbox.innerHTML = '';
+      lightbox.appendChild(closeBtn);
+      lightbox.appendChild(lbImg);
+    }
+  }
+
   closeBtn.addEventListener("click", closeLightbox);
   lightbox.addEventListener("click", function (e) {
     if (e.target === lightbox) closeLightbox();
@@ -406,9 +457,8 @@ initReveal();
   });
 })();
 
-// ===================== 鼠标跟随光晕 =====================
+// ===================== 鼠标跟随 =====================
 (function () {
-  // 仅精细指针设备（鼠标）启用，触屏自动忽略
   if (!window.matchMedia("(pointer: fine)").matches) return;
   var dot = document.querySelector(".cursor-dot");
   var halo = document.querySelector(".cursor-halo");
@@ -421,7 +471,6 @@ initReveal();
     if (!raf) raf = requestAnimationFrame(loop);
   });
 
-  // 光晕缓动跟随（呼吸感的拖尾）
   function loop() {
     hx += (tx - hx) * 0.16;
     hy += (ty - hy) * 0.16;
@@ -429,24 +478,20 @@ initReveal();
     halo.style.top = hy + "px";
     if (Math.abs(tx - hx) > 0.5 || Math.abs(ty - hy) > 0.5) {
       raf = requestAnimationFrame(loop);
-    } else {
-      raf = null;
-    }
+    } else { raf = null; }
   }
 
-  // 悬停可点击元素时光晕放大
   document.addEventListener("mouseover", function (e) {
     halo.classList.toggle("hovering", !!e.target.closest("a, .card, button"));
   });
 })();
 
-// ===================== 点击呼吸脉冲 =====================
+// ===================== 点击脉冲 =====================
 (function () {
-  var cards = document.querySelectorAll(".card, .btn-breathe");
-  cards.forEach(function (el) {
+  document.querySelectorAll(".card, .btn-breathe").forEach(function (el) {
     el.addEventListener("click", function () {
       el.classList.remove("pulse");
-      void el.offsetWidth; // 强制重绘以重启动画
+      void el.offsetWidth;
       el.classList.add("pulse");
     });
   });
