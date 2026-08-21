@@ -48,7 +48,7 @@ html{scroll-behavior:smooth}
 .hero{margin-bottom:48px;position:relative}
 .hero h1{font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-1px;font-family:var(--font-display);color:var(--text);animation:heroIn .8s ease both;position:relative;display:inline-block}
 .hero h1 .char-wrap{display:inline-block;overflow:hidden;vertical-align:bottom}
-.hero h1 .char{display:inline-block;animation:charSlide .6s ease both,slowFloat 4s ease-in-out infinite;animation-delay:var(--d,var(--i))}
+.hero h1 .char{display:inline-block;animation:charSlide .6s ease both,slowFloat 4s ease-in-out infinite;animation-delay:var(--d),0s}
 @keyframes charSlide{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:none}}
 @keyframes slowFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .hero h1::after{content:"";position:absolute;bottom:-4px;left:0;width:100%;height:3px;background:#111;border-radius:2px;transform:scaleX(0);transform-origin:left;animation:uIn .8s .6s ease both}
