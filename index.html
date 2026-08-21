@@ -32,6 +32,7 @@ html{scroll-behavior:smooth}
 .sidebar nav a .num{font-size:11px;color:#9ca3af}
 .sidebar .foot{margin-top:auto;color:#9ca3af;font-size:12px;line-height:1.8}
 .sidebar .foot b{display:block;color:var(--muted);font-size:13px}
+.mobile-contact{display:none}
 .contact-wrap{position:relative;display:inline-block}
 .btn-contact{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);font-size:14px;font-weight:600;background:#fff;cursor:pointer;text-align:center;animation:breathe 2.4s ease-in-out infinite;transition:all .2s}
 .btn-contact:hover{background:var(--accent);color:#fff;animation-play-state:paused;box-shadow:none}
@@ -100,7 +101,7 @@ html{scroll-behavior:smooth}
 .cursor-halo.hovering{width:64px;height:64px;background:rgba(59,130,246,.03)}
 .pulse{animation:pR .6s ease-out}
 @keyframes pR{0%{box-shadow:0 0 0 0 rgba(59,130,246,.3)}100%{box-shadow:0 0 0 20px rgba(59,130,246,0)}}
-@media(max-width:860px){.layout{flex-direction:column}.sidebar{width:100%;height:auto;position:static;flex-direction:row;align-items:center;padding:16px 24px;border-right:none;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}.sidebar .logo{margin:0 16px 0 0}.sidebar .sub{display:none}.sidebar nav{flex-direction:row;flex-wrap:wrap}.sidebar nav a{padding:6px 10px;font-size:13px;border-left:none}.sidebar nav a.active{border-bottom:2px solid var(--accent);border-left-color:transparent}.sidebar .foot{display:none}.main{margin-left:0;padding:32px 20px 48px}.grid{grid-template-columns:1fr}.contact-card{bottom:auto;top:calc(100% + 8px)}.floating-decor{display:none}}
+@media(max-width:860px){.layout{flex-direction:column}.sidebar{width:100%;height:auto;position:static;flex-direction:row;align-items:center;padding:16px 24px;border-right:none;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}.sidebar .logo{margin:0 16px 0 0}.sidebar .sub{display:none}.sidebar nav{flex-direction:row;flex-wrap:wrap}.sidebar nav a{padding:6px 10px;font-size:13px;border-left:none}.sidebar nav a.active{border-bottom:2px solid var(--accent);border-left-color:transparent}.sidebar .foot{margin-top:8px;width:100%}.sidebar .foot .contact-wrap{display:none}.mobile-contact{display:block!important}.main{margin-left:0;padding:32px 20px 48px}.grid{grid-template-columns:1fr}.contact-card{bottom:auto;top:calc(100% + 8px)}.floating-decor{display:none}.cursor-dot,.cursor-halo{display:none!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card{opacity:1;transform:none}.btn-contact{animation:none}.floating-decor{animation:none}}
 </style>
 </head>
@@ -116,6 +117,9 @@ html{scroll-behavior:smooth}
 <div class="sub">AE 动效 · AI 创作 · Maya 渲染 · 动画</div>
 <nav id="navLinks"></nav>
 <div class="foot">
+<div class="mobile-contact" style="display:none;font-size:12px;color:#6b7280;line-height:1.8">
+📞 15167797906 &nbsp; 💬 微信同号 &nbsp; 🐧 3460982393
+</div>
 <div class="contact-wrap" id="contactWrap">
 <button class="btn-contact" id="contactBtn">
 <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
@@ -144,7 +148,6 @@ html{scroll-behavior:smooth}
 </div>
 </section>
 <div id="groups"></div>
-<footer style="color:#9ca3af;font-size:12px;padding-top:32px;border-top:1px solid var(--border)">黄色标记 = 待接入 B 站；拿到视频 BV 号后填入数据即可显示播放器。</footer>
 </main>
 </div>
 <div class="lightbox" id="lightbox"><button class="close" aria-label="关闭">×</button><img src="" alt=""></div>
