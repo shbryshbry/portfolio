@@ -48,11 +48,11 @@ html{scroll-behavior:smooth}
 .hero{margin-bottom:48px;position:relative}
 .hero h1{font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-1px;font-family:var(--font-display);color:var(--text);animation:heroIn .8s ease both;position:relative;display:inline-block}
 .hero h1 .char-wrap{display:inline-block;overflow:hidden;vertical-align:bottom}
-.hero h1 .char{display:inline-block;animation:charSlide .6s ease both,slowFloat 4s ease-in-out infinite;animation-delay:var(--d),0s}
+.hero h1 .char{display:inline-block;animation:charSlide .6s ease both;animation-delay:var(--d)}
 @keyframes charSlide{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:none}}
-@keyframes slowFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.hero h1::after{content:"";position:absolute;bottom:-4px;left:0;width:100%;height:3px;background:#111;border-radius:2px;transform:scaleX(0);transform-origin:left;animation:uIn .8s .6s ease both}
-@keyframes uIn{to{transform:scaleX(1)}}
+.hero h1::after{content:"";position:absolute;bottom:-4px;left:0;width:100%;height:3px;background:var(--gradient-flow);background-size:300% 100%;border-radius:2px;animation:uIn .8s .6s ease both,lineFlow 3s linear infinite}
+@keyframes uIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes lineFlow{0%{background-position:0 50%}100%{background-position:300% 50%}}
 .hero p{color:var(--muted);margin-top:16px;font-size:15px;animation:heroIn .8s .3s ease both;letter-spacing:.5px}
 .hero .stats{margin-top:24px;display:flex;gap:28px;animation:heroIn .8s .4s ease both}
 .hero .stats div{font-size:13px;color:var(--muted)}
@@ -123,7 +123,10 @@ html{scroll-behavior:smooth}
 </button>
 <div class="contact-card" id="contactCard">
 <h4>联系方式</h4>
-<p>邮箱：<a href="mailto:ysbiao2005@163.com">ysbiao2005@163.com</a></p>
+<p>📞 电话：<a href="tel:15167797906">15167797906</a></p>
+<p>💬 微信：15167797906</p>
+<p>🐧 QQ：3460982393</p>
+<p>📧 邮箱：<a href="mailto:ysbiao2005@163.com">ysbiao2005@163.com</a></p>
 <p style="margin-top:8px;font-size:11px;color:#9ca3af">点击其他地方可关闭此卡片</p>
 </div>
 </div>
