@@ -153,30 +153,27 @@ html{scroll-behavior:smooth}
 <div class="cursor-halo"></div>
 <script>
 var W=[
-{file:"ai梦魇科普.mp4",title:"梦魇科普",bv:""},
-{file:"ai王老吉广告.mp4",title:"王老吉广告",bv:""},
-{file:"AE color.mp4",title:"Color",bv:""},
-{file:"AE loading.mp4",title:"Loading",bv:""},
-{file:"AE MG绘画.png",title:"MG绘画",bv:""},
-{file:"AE 手机界面动画.mp4",title:"手机界面动画",bv:""},
-{file:"AE 信箱 (0-00-00-00).mp4",title:"信箱",bv:""},
-{file:"maya 枪白模.png",title:"枪白模",bv:""},
-{file:"maya 小房间渲染.png",title:"小房间渲染",bv:""},
-{file:"maya 小桌子渲染.png",title:"小桌子渲染",bv:""},
-{file:"maya黑色房间渲染.jpg",title:"黑色房间渲染",bv:""},
-{file:"maya相机渲染.jpg",title:"相机渲染",bv:""},
-{file:"maya桌子白模.png",title:"桌子白模",bv:""},
-{file:"调色 城市.mp4",title:"城市",bv:""},
-{file:"调色 四季.mp4",title:"四季",bv:""},
-{file:"定格动画 消防成品.mp4",title:"消防成品",bv:""},
-{file:"快剪 电脑.mp4",title:"电脑",bv:""},
-{file:"快剪 珠宝.mp4",title:"珠宝",bv:""},
-{file:"短视频 丢卡牌.mp4",title:"丢卡牌",bv:""},
-{file:"短视频 相机跟踪.mp4",title:"相机跟踪",bv:""}
+{file:"ai梦魇科普.mp4",title:"梦魇科普",group:"AI 创作",bv:""},
+{file:"ai王老吉广告.mp4",title:"王老吉广告",group:"AI 创作",bv:""},
+{file:"AE color.mp4",title:"Color",group:"AE 动效",bv:""},
+{file:"AE loading.mp4",title:"Loading",group:"AE 动效",bv:""},
+{file:"AE MG绘画.png",title:"MG绘画",group:"AE 动效",bv:""},
+{file:"AE 手机界面动画.mp4",title:"手机界面动画",group:"AE 动效",bv:""},
+{file:"AE 信箱 (0-00-00-00).mp4",title:"信箱",group:"AE 动效",bv:""},
+{file:"maya 枪白模.png",title:"枪白模",group:"Maya 渲染",bv:""},
+{file:"maya 小房间渲染.png",title:"小房间渲染",group:"Maya 渲染",bv:""},
+{file:"maya 小桌子渲染.png",title:"小桌子渲染",group:"Maya 渲染",bv:""},
+{file:"maya黑色房间渲染.jpg",title:"黑色房间渲染",group:"Maya 渲染",bv:""},
+{file:"maya相机渲染.jpg",title:"相机渲染",group:"Maya 渲染",bv:""},
+{file:"maya桌子白模.png",title:"桌子白模",group:"Maya 渲染",bv:""},
+{file:"调色 城市.mp4",title:"城市",group:"调色",bv:""},
+{file:"调色 四季.mp4",title:"四季",group:"调色",bv:""},
+{file:"定格动画 消防成品.mp4",title:"消防成品",group:"定格动画",bv:""},
+{file:"快剪 电脑.mp4",title:"电脑",group:"快剪",bv:""},
+{file:"快剪 珠宝.mp4",title:"珠宝",group:"快剪",bv:""},
+{file:"短视频 丢卡牌.mp4",title:"丢卡牌",group:"短视频",bv:""},
+{file:"短视频 相机跟踪.mp4",title:"相机跟踪",group:"短视频",bv:""}
 ];
-var GROUP_MAP={"ai":"AI 创作","ae":"AE 动效","maya":"Maya 渲染","调色":"调色","定格":"定格动画","快剪":"快剪","短视频":"短视频"};
-function gN(f){var p=f.split(" ")[0].toLowerCase();for(var k in GROUP_MAP){if(p.indexOf(k.toLowerCase())===0)return GROUP_MAP[k]}return"其他"}
-W.forEach(function(w){var n=w.file.replace(/\.[^.]+$/,"");w.title=w.title||n;w.group=gN(w.file)});
 function pH(w){if(w.bv)return'<div class="player"><span class="badge">B 站</span><iframe src="//player.bilibili.com/player.html?bvid='+w.bv+'&page=1&autoplay=0" scrolling="no" allowfullscreen></iframe></div>';if(w.file.toLowerCase().endsWith(".jpg")||w.file.toLowerCase().endsWith(".png"))return'<div class="player"><img src="'+w.file+'" alt="'+w.title+'" loading="lazy"></div>';return'<div class="player"><span class="badge pending">待接入 B 站</span><video controls preload="metadata" playsinline src="'+w.file+'"></video></div>'}
 function cH(w,i){var d=' style="transition-delay:'+(i*80)+'ms"';return'<div class="card"'+d+' data-title="'+w.title+'" data-file="'+w.file+'" data-type="'+(w.file.toLowerCase().endsWith(".mp4")?"video":"image")+'">'+pH(w)+'<div class="meta"><h3>'+w.title+'</h3><span>'+w.group+'</span></div><div class="desc">'+w.file+'</div></div>'}
 var GN=[],G={};W.forEach(function(w){if(!G[w.group]){G[w.group]=[];GN.push(w.group)}G[w.group].push(w)});var ORDER=["Maya 渲染","AI 创作","AE 动效","快剪","定格动画","短视频","调色","其他"];GN.sort(function(a,b){return ORDER.indexOf(a)-ORDER.indexOf(b)});
