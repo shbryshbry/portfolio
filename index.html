@@ -168,13 +168,13 @@ var W=[
 {file:"maya 黑色房间渲染.jpg",title:"黑色房间渲染",group:"Maya 渲染",bv:""},
 {file:"maya 相机渲染.jpg",title:"相机渲染",group:"Maya 渲染",bv:""},
 {file:"maya 桌子白模.png",title:"桌子白模",group:"Maya 渲染",bv:""},
-{file:"调色 城市.mp4",title:"城市",group:"调色",bv:""},
-{file:"调色 四季.mp4",title:"四季",group:"调色",bv:""},
-{file:"定格动画 消防成品.mp4",title:"消防成品",group:"定格动画",bv:""},
-{file:"快剪 电脑.mp4",title:"电脑",group:"快剪",bv:""},
-{file:"快剪 珠宝.mp4",title:"珠宝",group:"快剪",bv:""},
-{file:"短视频 丢卡牌.mp4",title:"丢卡牌",group:"短视频",bv:""},
-{file:"短视频 相机跟踪.mp4",title:"相机跟踪",group:"短视频",bv:""}
+{file:"调色 城市.mp4",title:"城市",group:"调色",bv:"BV1Gn8M6dEZc"},
+{file:"调色 四季.mp4",title:"四季",group:"调色",bv:"BV1Yn8M6dEDM"},
+{file:"定格动画 消防成品.mp4",title:"消防成品",group:"定格动画",bv:"BV1pc8M6zEkf"},
+{file:"快剪 电脑.mp4",title:"电脑",group:"快剪",bv:"BV1rP8M6qEZt"},
+{file:"快剪 珠宝.mp4",title:"珠宝",group:"快剪",bv:"BV1nK8M6KES8"},
+{file:"短视频 丢卡牌.mp4",title:"丢卡牌",group:"短视频",bv:"BV1Gn8M6dEoQ"},
+{file:"短视频 相机跟踪.mp4",title:"相机跟踪",group:"短视频",bv:"BV1Ac8M66EEM"}
 ];
 function pH(w){if(w.bv)return'<div class="player"><span class="badge">B 站</span><iframe src="//player.bilibili.com/player.html?bvid='+w.bv+'&page=1&autoplay=0" scrolling="no" allowfullscreen></iframe></div>';if(w.file.toLowerCase().endsWith(".jpg")||w.file.toLowerCase().endsWith(".png"))return'<div class="player"><img src="'+w.file+'" alt="'+w.title+'" loading="lazy"></div>';return'<div class="player"><span class="badge pending">待接入 B 站</span><video controls preload="metadata" playsinline src="'+w.file+'"></video></div>'}
 function cH(w,i){var d=' style="transition-delay:'+(i*80)+'ms"';return'<div class="card"'+d+' data-title="'+w.title+'" data-file="'+w.file+'" data-type="'+(w.file.toLowerCase().endsWith(".mp4")?"video":"image")+'">'+pH(w)+'<div class="meta"><h3>'+w.title+'</h3><span>'+w.group+'</span></div><div class="desc">'+w.file+'</div></div>'}
