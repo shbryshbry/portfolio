@@ -58,6 +58,11 @@ html{scroll-behavior:smooth}
 .hero .stats{margin-top:24px;display:flex;gap:28px;animation:heroIn .8s .4s ease both}
 .hero .stats div{font-size:13px;color:var(--muted)}
 .hero .stats b{display:block;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.featured{margin-bottom:56px;position:relative}
+.featured-label{font-size:14px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.featured-label::before{content:"";display:inline-block;width:4px;height:16px;background:var(--accent);border-radius:2px}
+.featured-player{position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.featured-player iframe{width:100%;height:100%;border:0;display:block}
 @keyframes heroIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .block{margin-bottom:64px;scroll-margin-top:24px;position:relative}
 .block h2{font-size:22px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:12px;font-family:var(--font-display)}
@@ -147,6 +152,12 @@ html{scroll-behavior:smooth}
 <div><b class="count" data-to="0">0</b>图片</div>
 </div>
 </section>
+<section class="featured" id="featured">
+<div class="featured-label">个人作品集剪辑</div>
+<div class="featured-player">
+<iframe id="featuredIframe" src="" scrolling="no" allowfullscreen></iframe>
+</div>
+</section>
 <div id="groups"></div>
 </main>
 </div>
@@ -183,6 +194,7 @@ var gH="";GN.forEach(function(g){gH+='<section class="block" id="'+g+'"><h2><spa
 document.getElementById("groups").innerHTML=gH;
 document.getElementById("navLinks").innerHTML=GN.map(function(g){return'<a href="#'+g+'">'+g+'<span class="num">'+G[g].length+'</span></a>'}).join("");
 (function(){var t="我的作品集",h=document.getElementById("heroTitle");h.innerHTML=t.split("").map(function(c,i){return'<span class="char-wrap"><span class="char" style="--d:'+i*0.08+'s">'+c+"</span></span>"}).join("")})();
+(function(){var bv="";if(bv)document.getElementById("featuredIframe").src="//player.bilibili.com/player.html?bvid="+bv+"&page=1&autoplay=0";else document.getElementById("featuredIframe").parentElement.innerHTML='<div style="width:100%;aspect-ratio:16/9;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:14px;border-radius:var(--radius);border:1px solid var(--border)">等待接入 B 站</div>'})();
 (function(){var b=document.getElementById("scrollProgress");window.addEventListener("scroll",function(){var s=window.scrollY,d=document.documentElement.scrollHeight-window.innerHeight;b.style.width=(d>0?s/d*100:0)+"%"},{passive:true})})();
 var vN=W.filter(function(w){return w.file.toLowerCase().indexOf(".mp4")>-1}).length,iN=W.length-vN,counts=[W.length,vN,iN],cEls=document.querySelectorAll(".count");
 cEls.forEach(function(el,i){el.setAttribute("data-to",counts[i]);el.textContent="0"});
